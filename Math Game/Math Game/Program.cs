@@ -1,4 +1,6 @@
-﻿namespace Math_Game
+﻿using System.Diagnostics;
+
+namespace Math_Game
 {
     internal class Program
     {
@@ -76,19 +78,22 @@
         static string[] PlayAddition()
         {
             Console.Clear();
+            Stopwatch timer = new Stopwatch();
             Random rnd = new Random();
             int num1 = rnd.Next(1, 11);
             int num2 = rnd.Next(1, 11);
-            
+
             Console.WriteLine($"{num1} + {num2} = ...");
 
+            timer.Start();
             do
             {
                 if (int.TryParse(Console.ReadLine(), out int answer))
                 {
                     // Evaluate answer into result, and mark into history
+                    timer.Stop();
                     bool result = (answer == num1 + num2) ? true : false;
-                    return new string[] { num1.ToString(), "+", num2.ToString(), answer.ToString(), result.ToString() };
+                    return new string[] { num1.ToString(), "+", num2.ToString(), answer.ToString(), result.ToString(), timer.ElapsedMilliseconds.ToString()};
                 }
                 else
                 {
@@ -104,6 +109,7 @@
         static string[] PlaySubtraction()
         {
             Console.Clear();
+            Stopwatch timer = new Stopwatch();
             Random rnd = new Random();
             int num1, num2;
 
@@ -116,13 +122,15 @@
 
             Console.WriteLine($"{num1} - {num2} = ...");
 
+            timer.Start();
             do
             {
                 if (int.TryParse(Console.ReadLine(), out int answer))
                 {
                     // Evaluate answer into result, and mark into history
+                    timer.Stop();
                     bool result = (answer == num1 - num2) ? true : false;
-                    return new string[] { num1.ToString(), "-", num2.ToString(), answer.ToString(), result.ToString() };
+                    return new string[] { num1.ToString(), "+", num2.ToString(), answer.ToString(), result.ToString(), timer.ElapsedMilliseconds.ToString()};
                 }
                 else
                 {
@@ -138,19 +146,22 @@
         static string[] PlayMultiplication()
         {
             Console.Clear();
+            Stopwatch timer = new Stopwatch();
             Random rnd = new Random();
             int num1 = rnd.Next(1, 11);
             int num2 = rnd.Next(1, 11);
 
             Console.WriteLine($"{num1} x {num2} = ...");
 
+            timer.Start();
             do
             {
                 if (int.TryParse(Console.ReadLine(), out int answer))
                 {
                     // Evaluate answer into result, and mark into history
+                    timer.Stop();
                     bool result = (answer == num1 * num2) ? true : false;
-                    return new string[] { num1.ToString(), "x", num2.ToString(), answer.ToString(), result.ToString() };
+                    return new string[] { num1.ToString(), "+", num2.ToString(), answer.ToString(), result.ToString(), timer.ElapsedMilliseconds.ToString()};
                 }
                 else
                 {
@@ -166,6 +177,7 @@
         static string[] PlayDivision()
         {
             Console.Clear();
+            Stopwatch timer = new Stopwatch();
             Random rnd = new Random();
             int num1, num2;
 
@@ -179,13 +191,15 @@
 
             Console.WriteLine($"{num1} / {num2} = ...");
 
+            timer.Start();
             do
             {
                 if (int.TryParse(Console.ReadLine(), out int answer))
                 {
                     // Evaluate answer into result, and mark into history
+                    timer.Stop();
                     bool result = (answer == num1 / num2) ? true : false;
-                    return new string[] { num1.ToString(), "/", num2.ToString(), answer.ToString(), result.ToString() };
+                    return new string[] { num1.ToString(), "+", num2.ToString(), answer.ToString(), result.ToString(), timer.ElapsedMilliseconds.ToString()};
                 }
                 else
                 {
@@ -202,16 +216,23 @@
         {
             int numOfGames = 10;
             int numOfWins = 0;
+            int timeElapsed = 0;
 
             for (int i = history.Count() - 10; i < history.Count(); i++)
             {
                 //position [4] = result
                 if (bool.Parse(history[i][4]))
                     numOfWins++;
+                
+                //position [5] = timer
+                timeElapsed += int.Parse(history[i][5]);
             }
 
+            TimeSpan ts = TimeSpan.FromMilliseconds(timeElapsed);
+            string time = string.Format($"{ts.Minutes:D2}m:{ts.Seconds:D2}s:{ts.Milliseconds:D3}ms");
+
             Console.Clear();
-            Console.WriteLine($"You won {numOfWins} out of {numOfGames} games!");
+            Console.WriteLine($"You won {numOfWins} out of {numOfGames} games in {time}");
             Console.Write("Press Enter to return to the menu...");
             Console.ReadLine();
         }
@@ -226,12 +247,19 @@
             for (int i = 1; i <= numOfMatches; i++)
             {
                 //Match Loop
-                Console.WriteLine($"Match #{i}. Operater: {history[(i-1)*10][1]}");
+                Console.WriteLine($"Match #{i}. Operator: {history[(i-1)*10][1]}");
+                int timeElapsed = 0;
                 for (int j = (i - 1) * 10; j < (i - 1) * 10 + 10; j++)
                 {
                     //Game Loop
                     Console.WriteLine($"|\t{history[j][0]} {history[j][1]} {history[j][2]} = {history[j][3]}\t|\t{history[j][4]}");
+                    timeElapsed += int.Parse(history[j][5]);
                 }
+                
+                TimeSpan ts = TimeSpan.FromMilliseconds(timeElapsed);
+                string time = string.Format($"{ts.Minutes:D2}m:{ts.Seconds:D2}s:{ts.Milliseconds:D3}ms");
+
+                Console.WriteLine($"Match duration: {time}");
                 Console.WriteLine();
             }
             
